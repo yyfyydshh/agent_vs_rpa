@@ -109,7 +109,7 @@
       position: relative;
       min-height: min(760px, 92vh);
       display: grid;
-      grid-template-columns: minmax(420px, .92fr) minmax(440px, 1.08fr);
+      grid-template-columns: minmax(360px, .78fr) minmax(520px, 1.22fr);
       gap: clamp(24px, 4vw, 60px);
       align-items: center;
       padding: clamp(58px, 7vw, 92px) clamp(18px, 5vw, 76px) 48px;
@@ -138,7 +138,7 @@
       z-index: 2;
     }
     .hero-copy {
-      max-width: 820px;
+      max-width: 680px;
     }
     .eyebrow {
       display: inline-flex;
@@ -154,10 +154,10 @@
     }
     .hero h1 {
       margin: 18px 0 18px;
-      font-size: clamp(36px, 4.2vw, 60px);
-      line-height: 1.08;
+      font-size: clamp(34px, 3.15vw, 48px);
+      line-height: 1.12;
       letter-spacing: 0;
-      max-width: min(100%, 780px);
+      max-width: min(100%, 11.5em);
       text-wrap: balance;
     }
     .hero-lede {
@@ -233,6 +233,7 @@
       border-radius: 10px;
       color: #344054;
       font-size: 14px;
+      font-weight: 750;
       line-height: 1.35;
     }
     .toc a.active,
@@ -473,7 +474,7 @@
         padding-top: 38px;
       }
       .hero h1 {
-        font-size: clamp(34px, 9vw, 46px);
+        font-size: clamp(32px, 8.5vw, 42px);
         max-width: 12em;
       }
       .hero-media { width: 100%; opacity: .34; }
@@ -600,6 +601,10 @@
 
     function slugify(text, index) {
       return "sec-" + index + "-" + text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 42);
+    }
+
+    function displayTitle(title) {
+      return title.replace(/^0\.\s*/, "");
     }
 
     function parseBlocks(lines) {
@@ -776,7 +781,7 @@
         visible++;
         const link = document.createElement("a");
         link.href = "#" + sec.id;
-        link.textContent = sec.title;
+        link.textContent = displayTitle(sec.title);
         link.classList.toggle("active", index === activeIndex);
         link.addEventListener("click", event => {
           event.preventDefault();
@@ -798,7 +803,7 @@
         ? '<figure class="section-hero-image"><img src="' + visual.src + '" alt="' + escapeHtml(visual.caption) + '"><figcaption>' + escapeHtml(visual.caption) + '</figcaption></figure>'
         : "";
       const lines = sec.body.split("\n");
-      articleBody.innerHTML = '<section id="' + sec.id + '" data-title="' + escapeHtml(sec.title) + '"><h2>' + inline(sec.title) + '</h2>' + visualHtml + parseBlocks(lines).join("") + '<div class="section-actions"><button class="mini" id="prevSection" type="button">上一章</button><button class="mini" id="nextSection" type="button">下一章</button></div></section>';
+      articleBody.innerHTML = '<section id="' + sec.id + '" data-title="' + escapeHtml(sec.title) + '"><h2>' + inline(displayTitle(sec.title)) + '</h2>' + visualHtml + parseBlocks(lines).join("") + '<div class="section-actions"><button class="mini" id="prevSection" type="button">上一章</button><button class="mini" id="nextSection" type="button">下一章</button></div></section>';
       document.getElementById("prevSection").disabled = activeIndex === 0;
       document.getElementById("nextSection").disabled = activeIndex === sections.length - 1;
       document.getElementById("prevSection").addEventListener("click", () => showSection(Math.max(0, activeIndex - 1)));
