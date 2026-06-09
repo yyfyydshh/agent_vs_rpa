@@ -360,19 +360,41 @@ const html = String.raw`<!doctype html>
     .dimension-item strong { color: #12263f; }
     .meter {
       display: grid;
-      grid-template-columns: var(--rpa, 50%) 1fr;
-      height: 9px;
-      overflow: hidden;
-      border-radius: 99px;
+      gap: 5px;
+    }
+    .meter-line {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
       background: rgba(16,24,40,.08);
+      overflow: hidden;
     }
-    .meter::before {
+    .meter-line::before {
       content: "";
-      background: #2563eb;
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: calc(var(--value, 50) * 10%);
+      border-radius: inherit;
+      background: var(--color, #2563eb);
     }
-    .meter::after {
-      content: "";
-      background: #f59e0b;
+    .meter-line.rpa { --color: #2563eb; }
+    .meter-line.agent { --color: #f59e0b; }
+    .meter-line.hybrid { --color: #16a34a; }
+    .score-pill {
+      display: inline-flex;
+      justify-content: center;
+      padding: 2px 0;
+      border-radius: 999px;
+      background: rgba(248,250,252,.95);
+      font-weight: 700;
+    }
+    .score-pill.rpa { color: #1d4ed8; }
+    .score-pill.agent { color: #b45309; }
+    .score-pill.hybrid { color: #15803d; }
+    .meter-note {
+      margin-top: 4px;
+      color: #667085;
+      font-size: 11px;
     }
     .scenario-cards {
       display: grid;
@@ -1185,13 +1207,18 @@ const html = String.raw`<!doctype html>
       }
 
       list.innerHTML = automationDimensions.map(item => {
-        const rpaWidth = Math.max(8, Math.min(92, item.rpa * 10));
         const best = bestOption(item);
         return '<div class="dimension-item" title="' + escapeHtml(item.note) + '">' +
           '<strong>' + escapeHtml(item.label) + '</strong>' +
-          '<span class="meter" style="--rpa:' + rpaWidth + '%"></span>' +
-          '<span>R ' + item.rpa.toFixed(1) + '</span>' +
-          '<span>A ' + item.agent.toFixed(1) + '</span>' +
+          '<div class="meter">' +
+            '<div class="meter-line rpa" style="--value:' + item.rpa.toFixed(1) + '"></div>' +
+            '<div class="meter-line agent" style="--value:' + item.agent.toFixed(1) + '"></div>' +
+            '<div class="meter-line hybrid" style="--value:' + item.hybrid.toFixed(1) + '"></div>' +
+            '<div class="meter-note">蓝色 RPA / 橙色 Agent / 绿色 混合，均按 10 分制长度显示</div>' +
+          '</div>' +
+          '<span class="score-pill rpa">R ' + item.rpa.toFixed(1) + '</span>' +
+          '<span class="score-pill agent">A ' + item.agent.toFixed(1) + '</span>' +
+          '<span class="score-pill hybrid">H ' + item.hybrid.toFixed(1) + '</span>' +
           '<span class="best-badge ' + best.key + '">' + best.label + '</span>' +
           '</div>';
       }).join("");
