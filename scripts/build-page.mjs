@@ -407,16 +407,6 @@ const html = String.raw`<!doctype html>
       opacity: 1;
       transition: opacity .2s ease;
     }
-    .dimension-drawer::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 78px;
-      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 62%, rgba(255,255,255,1));
-      pointer-events: none;
-    }
     .dimension-list {
       display: grid;
       gap: 10px;
