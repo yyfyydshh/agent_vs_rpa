@@ -197,6 +197,11 @@
       padding: 22px clamp(18px, 4vw, 56px) 72px;
       max-width: 1540px;
       margin: 0 auto;
+      transition: grid-template-columns .24s ease, gap .24s ease;
+    }
+    .layout.toc-collapsed {
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 16px;
     }
     .toc {
       position: sticky;
@@ -210,12 +215,31 @@
       background: rgba(255,255,255,.74);
       backdrop-filter: blur(18px);
       box-shadow: 0 16px 50px rgba(15,23,42,.07);
+      transition: padding .24s ease, border-radius .24s ease;
+    }
+    .toc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
     .toc h2 {
       margin: 0 0 10px;
       font-size: 13px;
       text-transform: uppercase;
       color: var(--muted);
+    }
+    .toc-head h2 { margin: 0; }
+    .toc-toggle {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(16,24,40,.1);
+      border-radius: 999px;
+      background: rgba(255,255,255,.96);
+      color: #344054;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
     }
     .toc a {
       display: block;
@@ -231,6 +255,18 @@
       background: rgba(18,181,203,.1);
       color: #075985;
       text-decoration: none;
+    }
+    .layout.toc-collapsed .toc {
+      padding: 12px 10px;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .layout.toc-collapsed .toc-head {
+      justify-content: center;
+    }
+    .layout.toc-collapsed .toc h2,
+    .layout.toc-collapsed #toc {
+      display: none;
     }
 
     .content {
@@ -325,10 +361,23 @@
       grid-template-columns: minmax(280px, .46fr) minmax(0, .54fr);
       gap: 0;
       min-height: 580px;
+      align-items: stretch;
     }
     .decision-panel {
+      display: flex;
+      flex-direction: column;
       padding: clamp(20px, 3vw, 30px);
+      height: 900px;
+      min-height: 580px;
+      max-height: 900px;
+      overflow: hidden;
       border-right: 1px solid rgba(16,24,40,.08);
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
     .decision-panel h3,
     .legend-panel h3 {
@@ -336,9 +385,36 @@
       font-size: 16px;
       color: #12263f;
     }
+    .panel-head h3 { margin: 0; }
+    .dimension-summary {
+      margin: 10px 0 0;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .dimension-drawer {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 6px;
+      opacity: 1;
+      transition: opacity .2s ease;
+    }
+    .dimension-drawer::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 78px;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 62%, rgba(255,255,255,1));
+      pointer-events: none;
+    }
     .dimension-list {
       display: grid;
       gap: 10px;
+      margin-top: 14px;
     }
     .dimension-item {
       display: grid;
@@ -406,7 +482,10 @@
     .scenario-card span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.45; }
     .chart-shell {
       position: relative;
+      height: 900px;
       min-height: 580px;
+      max-height: 900px;
+      overflow: auto;
       background:
         linear-gradient(180deg, rgba(248,250,252,.75), rgba(255,255,255,.96)),
         radial-gradient(circle at 70% 20%, rgba(18,181,203,.16), transparent 30%);
@@ -798,31 +877,10 @@
       .switcher { grid-template-columns: 1fr; }
       .decision-head { grid-template-columns: 1fr; }
       .decision-score { text-align: left; }
-      .dimension-item { grid-template-columns: 70px minmax(0, 1fr) 44px; }
+      .dimension-item { grid-template-columns: 70px minmax(0, 1fr); }
       .dimension-item span { font-size: 12px; }
-      .dimension-item span:nth-of-type(2),
-      .dimension-item span:nth-of-type(3),
-      .dimension-item span:nth-of-type(4) { display: none; }
-      .meter-note { display: none; }
       .scenario-cards { grid-template-columns: 1fr; }
-      .decision-route {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        padding: 10px 10px 0;
-      }
-      .route-card { padding: 8px; }
-      .route-card strong { font-size: 12px; }
-      .route-card span { font-size: 11px; line-height: 1.3; }
-      .combo-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
-        padding: 6px 10px 0;
-      }
-      .combo-card { padding: 8px; }
-      .combo-card strong { font-size: 12px; }
-      .combo-card span { font-size: 11px; }
-      .combo-tags { display: none; }
-      .legend-panel { top: 12px; right: 12px; width: 190px; }
+      .legend-panel { position: static; width: auto; margin: 14px; }
       #automation3dCanvas,
       .chart-shell { min-height: 520px; }
       .article { padding: 22px; }
@@ -843,7 +901,7 @@
       <section class="hero">
         <div class="hero-media" aria-hidden="true"></div>
         <div class="hero-copy">
-          <span class="eyebrow">AI 自动化商业化分析 · 2026-06-09</span>
+          <span class="eyebrow">AI 自动化商业化分析 · 2026-06-10</span>
           <h1>Agent 平台、RPA、应用市场与 Skill 的对比分析</h1>
           <div class="hero-cta">
             <a class="btn" href="#article">阅读完整分析</a>
@@ -862,7 +920,10 @@
 
       <div class="layout">
         <nav class="toc" aria-label="章节目录">
-          <h2>目录</h2>
+          <div class="toc-head">
+            <h2>目录</h2>
+            <button class="toc-toggle" id="tocToggle" type="button" aria-expanded="true" aria-label="隐藏目录">-</button>
+          </div>
           <div id="toc"></div>
         </nav>
 
@@ -895,7 +956,6 @@
             <div class="decision-head">
               <div>
                 <h2 id="decision3dTitle">Agent 与 RPA 自动化选择球状 3D 仪表盘</h2>
-                <p>按自动化落地的关键维度给 Agent、RPA 与混合架构打分。分值越高，轨迹越贴近球体外圈；绿色轨迹表示“Agent 负责理解、生成、维护，RPA/API/脚本负责稳定执行”的综合方案。</p>
               </div>
               <div class="decision-score" aria-label="综合建议">
                 <b>Hybrid</b>
@@ -904,20 +964,25 @@
             </div>
             <div class="decision-body">
               <aside class="decision-panel" aria-label="评分维度">
-                <h3>维度评分</h3>
-                <div class="dimension-list" id="dimensionList"></div>
-                <div class="scenario-cards" aria-label="场景选择建议">
-                  <div class="scenario-card">
-                    <strong>选 RPA</strong>
-                    <span>流程固定、页面稳定、低容错、强审计、批量重复。</span>
-                  </div>
-                  <div class="scenario-card">
-                    <strong>选 Agent</strong>
-                    <span>目标模糊、信息非结构化、需要判断、生成或跨系统规划。</span>
-                  </div>
-                  <div class="scenario-card">
-                    <strong>选混合</strong>
-                    <span>高价值流程：Agent 做判断和维护，脚本/API/RPA 做确定性执行。</span>
+                <div class="panel-head">
+                  <h3>维度评分</h3>
+                </div>
+                <p class="dimension-summary">滚动查看全部评分与场景建议，首屏优先保留路线卡和 3D 球图。</p>
+                <div class="dimension-drawer" id="dimensionDrawer">
+                  <div class="dimension-list" id="dimensionList"></div>
+                  <div class="scenario-cards" aria-label="场景选择建议">
+                    <div class="scenario-card">
+                      <strong>选 RPA</strong>
+                      <span>流程固定、页面稳定、低容错、强审计、批量重复。</span>
+                    </div>
+                    <div class="scenario-card">
+                      <strong>选 Agent</strong>
+                      <span>目标模糊、信息非结构化、需要判断、生成或跨系统规划。</span>
+                    </div>
+                    <div class="scenario-card">
+                      <strong>选混合</strong>
+                      <span>高价值流程：Agent 做判断和维护，脚本/API/RPA 做确定性执行。</span>
+                    </div>
                   </div>
                 </div>
               </aside>
@@ -1532,6 +1597,32 @@
       render();
     }
 
+    function initTocPanel() {
+      const layout = document.querySelector(".layout");
+      const toggle = document.getElementById("tocToggle");
+      if (!layout || !toggle) return;
+
+      function sync() {
+        const collapsed = layout.classList.contains("toc-collapsed");
+        toggle.textContent = collapsed ? "+" : "-";
+        toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+        toggle.setAttribute("aria-label", collapsed ? "展开目录" : "隐藏目录");
+      }
+
+      toggle.addEventListener("click", () => {
+        layout.classList.toggle("toc-collapsed");
+        sync();
+      });
+
+      sync();
+    }
+
+    function syncDecisionSection() {
+      const decision = document.getElementById("decision-3d");
+      if (!decision) return;
+      decision.hidden = activeIndex !== 0;
+    }
+
     function renderToc() {
       toc.innerHTML = "";
       let visible = 0;
@@ -1565,6 +1656,7 @@
 
     function showSection(index, updateHash = true) {
       activeIndex = Math.max(0, Math.min(sections.length - 1, index));
+      syncDecisionSection();
       renderSection(sections[activeIndex]);
       renderToc();
       document.querySelectorAll(".chip").forEach(chip => {
@@ -1576,6 +1668,7 @@
     }
 
     function render() {
+      syncDecisionSection();
       renderSection(sections[activeIndex]);
       renderToc();
     }
